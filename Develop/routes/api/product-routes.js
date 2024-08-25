@@ -4,44 +4,50 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 // The `/api/products` endpoint
 
 // get all products
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   // find all products
   try {
-    const product = await Product.findAll();
-    res.status(200).json(Product);
+    const product = await Product.findAll({
+      include:[Category,{model:Tag,through:ProductTag}]
+    });
+    res.status(200).json(product);
   } catch (err) {
+    console.log(err)
     res.status(500).json(err);
+  }
   // be sure to include its associated Category and Tag data
 });
 
 // get one product
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   // find a single product by its `id`
   // be sure to include its associated Category and Tag data
   try {
-    const product = await Product.findByPk(req.params.id);
-    if (!Product) {
+    const product = await Product.findByPk(req.params.id,{
+      include:[Category,{model:Tag,through:ProductTag}]
+    });
+    if (product) {
       res.status(404).json({ message: 'No product with this id!' });
       return;
     }
-    res.status(200).json(Product);
+    res.status(200).json(product);
   } catch (err) {
     res.status(500).json(err);
   }
 });
 
 // create new product
-router.post('/', (req, res) => {
-    try {
-    const product = await Product.create({
-      product_name: "Basketball",
-      price: 200.00,
-      stock: 3,
-      tagIds: [1, 2, 3, 4]
-    });
-    res.status(200).json(Product);
-  } catch (err) {
-    res.status(400).json(err);
+router.post('/', async (req, res) => {
+  //   try {
+  //   const product = await Product.create({
+  //     product_name: "Basketball",
+  //     price: 200.00,
+  //     stock: 3,
+  //     tagIds: [1, 2, 3, 4]
+  //   });
+  //   res.status(200).json(product);
+  // } catch (err) {
+  //   res.status(400).json(err);
 
   Product.create(req.body)
     .then((product) => {
@@ -66,7 +72,7 @@ router.post('/', (req, res) => {
 });
 
 // update product
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
   // update product data
   Product.update(req.body, {
     where: {
@@ -110,7 +116,7 @@ router.put('/:id', (req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
   // delete one product by its `id` value
   try {
     const product = await Product.destroy({
@@ -118,7 +124,7 @@ router.delete('/:id', (req, res) => {
         id: req.params.id,
       },
     });
-    if (!Product) {
+    if (!product) {
       res.status(404).json({ message: 'No product with this id!' });
       return;
     }
