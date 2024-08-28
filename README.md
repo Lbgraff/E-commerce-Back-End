@@ -24,4 +24,4 @@ I referred to the class activities for examples.
 
 Link to Github repo: https://github.com/Lbgraff/E-commerce-Back-End
 
-Link to walkthrough video: 
+Link to walkthrough video: https://drive.google.com/file/d/1ql9tmnHzsFRZgkWBzOLAwWsYYy9_bnxs/view
